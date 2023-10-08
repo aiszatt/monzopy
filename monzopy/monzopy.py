@@ -9,7 +9,7 @@ from aiohttp import ClientSession
 API_URL_BASE = "https://api.monzo.com"
 
 
-class MonzoApi(ABC):  # pylint: disable=too-few-public-methods
+class AbstractMonzoApi(ABC):  # pylint: disable=too-few-public-methods
     """Define an object to work with the AirVisual Cloud API."""
 
     def __init__(self, session: ClientSession) -> None:
