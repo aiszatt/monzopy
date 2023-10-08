@@ -1,6 +1,6 @@
 [project]
 name = "monzopy"
-version = "1.0.8"
+version = "1.0.9"
 authors = [
   { name="Jake Martin", email="jake_martin_@outlook.com" },
 ]
@@ -16,3 +16,6 @@ classifiers = [
 [project.urls]
 "Homepage" = "https://github.com/JakeMartin-ICL/monzopy"
 "Bug Tracker" = "https://github.com/JakeMartin-ICL/monzopy/issues"
+
+[tool.setuptools.package-data]
+"monzopy" = ["py.typed"]
