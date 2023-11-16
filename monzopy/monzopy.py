@@ -69,6 +69,7 @@ ACCOUNT_NAMES = {
     CURRENT_ACCOUNT: "Current Account",
     "uk_retail_joint": "Joint Account",
     "uk_monzo_flex": "Flex",
+    "uk_business": "Business Account",
 }
 
 
