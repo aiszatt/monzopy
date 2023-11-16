@@ -97,7 +97,7 @@ class UserAccount:
                     result.append(
                         {
                             "id": account["id"],
-                            "name": ACCOUNT_NAMES[account["type"]],
+                            "name": ACCOUNT_NAMES.get(account["type"], account["type"]),
                             "type": account["type"],
                             "balance": balance,
                         }
