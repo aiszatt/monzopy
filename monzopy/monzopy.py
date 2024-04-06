@@ -64,6 +64,7 @@ class AbstractMonzoApi(ABC):  # pylint: disable=too-few-public-methods
 INVALID_ACCOUNT_TYPES = ["uk_monzo_flex_backing_loan", "uk_prepaid"]
 
 CURRENT_ACCOUNT = "uk_retail"
+JOINT_ACCOUNT = "uk_retail_joint"
 
 ACCOUNT_NAMES = {
     CURRENT_ACCOUNT: "Current Account",
@@ -112,15 +113,31 @@ class UserAccount:
         """List pots and their balance."""
         if self._current_account_id == 0:
             await self._get_accounts()
-        pots = await self._request(
+    
+        current_account_pots = await self._request(
             "get", "pots", params={"current_account_id": self._current_account_id}
         )
+    
         try:
-            valid_pots = [pot for pot in pots["pots"] if pot["deleted"] is False]
+            valid_current_account_pots = [pot for pot in current_account_pots["pots"] if pot["deleted"] is False]
         except KeyError:
             raise InvalidMonzoAPIResponseError
-        return valid_pots
+    
+        # If we have a joint account, fetch its pots and append to the current account's pots
+        if self._joint_account_id != 0:
+            joint_account_pots = await self._request(
+                "get", "pots", params={"current_account_id": self._joint_account_id}
+            )
+            try:
+                valid_joint_account_pots = [pot for pot in joint_account_pots["pots"] if not pot["deleted"]]
+                for pot in valid_joint_account_pots:
+                    pot["name"] = f"Joint Pot - {pot['name']}"
+                valid_current_account_pots.extend(valid_joint_account_pots)
+            except KeyError:
+                raise InvalidMonzoAPIResponseError
 
+        return valid_current_account_pots
+        
     async def _get_accounts(self) -> list[dict[str, Any]]:
         res = await self._request("get", "accounts")
         valid_accounts = []
@@ -131,6 +148,9 @@ class UserAccount:
                     valid_accounts.append(acc)
                     if acc["type"] == CURRENT_ACCOUNT:
                         self._current_account_id = acc["id"]
+                    if acc["type"] == JOINT_ACCOUNT:
+                        self._joint_account_id = acc["id"]
+
         except KeyError:
             raise InvalidMonzoAPIResponseError
         return valid_accounts
