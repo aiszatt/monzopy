@@ -129,7 +129,7 @@ class UserAccount:
                 "get", "pots", params={"current_account_id": self._joint_account_id}
             )
             try:
-                valid_joint_account_pots = [pot for pot in joint_account_pots["pots"] if not pot["deleted"]]
+                valid_joint_account_pots = [pot for pot in joint_account_pots["pots"] if pot["deleted"] is False]
                 for pot in valid_joint_account_pots:
                     pot["name"] = f"Joint Pot - {pot['name']}"
                 valid_current_account_pots.extend(valid_joint_account_pots)
